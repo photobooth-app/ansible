@@ -3,6 +3,8 @@
   hosts: wigglenodes # oder 'all', je nach Inventar
   become: false
   vars:
+    # Path to the dedicated venv for wigglecam
+    wigglecam_venv: "{{ ansible_env.HOME }}/wigglecam-venv"
     # Data directory used by the app to store images, logs, and config
     data_dir: "{{ ansible_env.HOME }}/wigglecam-data"
     # Service unit path for user services
@@ -20,13 +22,6 @@
         upgrade: dist
 
   tasks:
-    - name: Ensure pipx is installed
-      become: true
-      ansible.builtin.apt:
-        name: pipx
-        state: present
-        update_cache: false
-
     - name: Ensure apps prerequisites are installed
       become: true
       ansible.builtin.apt:
@@ -39,14 +34,15 @@
         state: present
         update_cache: false
 
-    - name: Install wigglecam with pipx into system Python
-      become: false
+    - name: Install wigglecam into a dedicated venv
+      ansible.builtin.pip:
+        name: "wigglecam[node]"
+        virtualenv: "{{ wigglecam_venv }}"
+        virtualenv_command: "python3 -m venv"
+        virtualenv_site_packages: true # system packages visible for picamera2/libcamera
       environment:
-        TMPDIR: /var/tmp # /tmp during pipx is default location but too space constraint on pi zero
-      ansible.builtin.command: >
-        pipx install --system-site-packages wigglecam[node]
-      args:
-        creates: "{{ ansible_env.HOME }}/.local/bin/wigglecam-node"
+        TMPDIR: /var/tmp # avoid /tmp space issues on Pi Zero
+      become: false
 
     - name: Create data directory
       ansible.builtin.file:
@@ -81,7 +77,7 @@
               Type=simple
               Restart=always
               WorkingDirectory={{ data_dir }}
-              ExecStart={{ ansible_env.HOME }}/.local/bin/wigglecam-node --camera {{ camera }} --device-id {{ device_id }}
+              ExecStart={{ wigglecam_venv }}/bin/wigglecam-node --camera {{ camera }} --device-id {{ device_id }}
 
               [Install]
               WantedBy=default.target

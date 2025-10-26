@@ -91,14 +91,14 @@
             daemon_reload: true
             scope: user
 
-        - name: Enable photobooth-app user service
+        - name: Enable wigglecam-node user service
           ansible.builtin.systemd:
-            name: photobooth-app.service
+            name: wigglecam-node.service
             enabled: true
             scope: user
 
-        - name: Start photobooth-app user service
+        - name: Start wigglecam-node user service
           ansible.builtin.systemd:
-            name: photobooth-app.service
+            name: wigglecam-node.service
             state: started
             scope: user

@@ -58,6 +58,14 @@
 
     - name: Setup systemd service for wigglecam-node
       block:
+        - name: Ensure systemd user unit directory exists
+          ansible.builtin.file:
+            path: "{{ systemd_user_unit_dir }}"
+            state: directory
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
+            mode: "0755"
+
         - name: Deploy user systemd service for wigglecam-node
           ansible.builtin.copy:
             dest: "{{ systemd_user_unit_dir }}/wigglecam-node.service"

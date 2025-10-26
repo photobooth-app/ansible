@@ -46,7 +46,7 @@
       ansible.builtin.command: >
         pipx install --system-site-packages wigglecam[node]
       args:
-        creates: wigglecam-node
+        creates: "{{ ansible_env.HOME }}/.local/bin/wigglecam-node"
 
     - name: Create data directory
       ansible.builtin.file:

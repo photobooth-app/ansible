@@ -96,5 +96,5 @@
         - name: Start wigglecam-node user service
           ansible.builtin.systemd:
             name: wigglecam-node.service
-            state: started
+            state: restarted
             scope: user

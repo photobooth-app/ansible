@@ -81,7 +81,7 @@
               Type=simple
               Restart=always
               WorkingDirectory={{ data_dir }}
-              ExecStart=wigglecam-node --camera {{ camera }} --device-id {{ device_id }}
+              ExecStart={{ ansible_env.HOME }}/.local/bin/wigglecam-node --camera {{ camera }} --device-id {{ device_id }}
 
               [Install]
               WantedBy=default.target

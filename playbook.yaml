@@ -63,7 +63,7 @@
             group: "{{ ansible_user }}"
             mode: "0755"
 
-        - name: Deploy user systemd service for wigglecam-node
+        - name: Deploy user systemd service for wigglecam-node # info: need linger to keep user logged in.
           ansible.builtin.copy:
             dest: "{{ systemd_user_unit_dir }}/wigglecam-node.service"
             owner: "{{ ansible_user }}"
@@ -82,6 +82,12 @@
 
               [Install]
               WantedBy=default.target
+
+        - name: Enable linger for {{ ansible_user }} # needed to allow user based services to keep running even if not logged in
+          become: true
+          ansible.builtin.command: "loginctl enable-linger {{ ansible_user }}"
+          args:
+            creates: "/var/lib/systemd/linger/{{ ansible_user }}"
 
         - name: Reload user systemd daemon
           ansible.builtin.systemd:

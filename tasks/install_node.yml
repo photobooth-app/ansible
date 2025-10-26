@@ -26,5 +26,5 @@
       command: >
         pipx install --system-site-packages wigglecam[node]
       args:
-        creates: /home/pi/.local/pipx/venvs/wigglecam # to avoid reinstallation every time.
+        creates: /home/pi/.local/pipx/venvs/wigglecam-node # to avoid reinstallation every time.
 

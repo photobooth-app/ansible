@@ -1,7 +1,12 @@
 ---
 - name: Install wigglecam via pipx into system Python
-  hosts: all        # oder 'all', je nach Inventar
+  hosts: wigglenodes # oder 'all', je nach Inventar
   become: false
+  vars:
+    # Data directory used by the app to store images, logs, and config
+    data_dir: "{{ ansible_env.HOME }}/wigglecam-data"
+    # Service unit path for user services
+    systemd_user_unit_dir: "{{ ansible_env.HOME }}/.local/share/systemd/user"
 
   pre_tasks:
     - name: Ensure apt index is up to date
@@ -37,8 +42,55 @@
     - name: Install wigglecam with pipx into system Python
       become: false
       environment:
-        TMPDIR: /var/tmp
+        TMPDIR: /var/tmp # /tmp during pipx is default location but too space constraint on pi zero
       ansible.builtin.command: >
         pipx install --system-site-packages wigglecam[node]
       args:
         creates: wigglecam-node
+
+    - name: Create data directory
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0755"
+
+    - name: Setup systemd service for wigglecam-node
+      block:
+        - name: Deploy user systemd service for wigglecam-node
+          ansible.builtin.copy:
+            dest: "{{ systemd_user_unit_dir }}/wigglecam-node.service"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
+            mode: "0644"
+            content: |
+              [Unit]
+              Description=wigglecam-node
+              After=default.target
+
+              [Service]
+              Type=simple
+              Restart=always
+              WorkingDirectory={{ data_dir }}
+              ExecStart=wigglecam-node --camera {{camera}} --device-id {{device_id}}
+
+              [Install]
+              WantedBy=default.target
+
+        - name: Reload user systemd daemon
+          ansible.builtin.systemd:
+            daemon_reload: true
+            scope: user
+
+        - name: Enable photobooth-app user service
+          ansible.builtin.systemd:
+            name: photobooth-app.service
+            enabled: true
+            scope: user
+
+        - name: Start photobooth-app user service
+          ansible.builtin.systemd:
+            name: photobooth-app.service
+            state: started
+            scope: user

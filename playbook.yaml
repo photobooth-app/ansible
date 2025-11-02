@@ -32,13 +32,14 @@
           - python3-picamera2
           - build-essential
           - libnng-dev
+          - git # to install from git.
         state: present
         update_cache: false
 
     - name: Install wigglecam into a dedicated venv
       ansible.builtin.pip:
         # name: "wigglecam[node]"
-        name: "git+https://github.com/photobooth-app/wigglecam.git#egg=wigglecam[node]"
+        name: "wigglecam[node] @ git+https://github.com/photobooth-app/wigglecam.git"
         virtualenv: "{{ wigglecam_venv }}"
         virtualenv_command: "python3 -m venv"
         virtualenv_site_packages: true # system packages visible for picamera2/libcamera

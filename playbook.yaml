@@ -37,10 +37,12 @@
 
     - name: Install wigglecam into a dedicated venv
       ansible.builtin.pip:
-        name: "wigglecam[node]"
+        # name: "wigglecam[node]"
+        name: "git+https://github.com/photobooth-app/wigglecam.git#egg=wigglecam[node]"
         virtualenv: "{{ wigglecam_venv }}"
         virtualenv_command: "python3 -m venv"
         virtualenv_site_packages: true # system packages visible for picamera2/libcamera
+        extra_args: "--upgrade" # ensure latest commit is pulled
       environment:
         TMPDIR: /var/tmp # avoid /tmp space issues on Pi Zero
       become: false

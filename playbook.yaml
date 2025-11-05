@@ -119,6 +119,7 @@
             scope: user
 
         - name: Ensure dtoverlay=disable-wifi is present
+          become: true
           ansible.builtin.lineinfile:
             path: /boot/firmware/config.txt
             regexp: "^dtoverlay=disable-wifi"
@@ -126,6 +127,7 @@
             insertafter: EOF
 
         - name: Ensure dtoverlay=disable-bt is present
+          become: true
           ansible.builtin.lineinfile:
             path: /boot/firmware/config.txt
             regexp: "^dtoverlay=disable-bt"

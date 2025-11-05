@@ -117,3 +117,17 @@
             name: wigglecam-node.service
             state: restarted
             scope: user
+
+        - name: Ensure dtoverlay=disable-wifi is present
+          ansible.builtin.lineinfile:
+            path: /boot/firmware/config.txt
+            regexp: "^dtoverlay=disable-wifi"
+            line: "dtoverlay=disable-wifi"
+            insertafter: EOF
+
+        - name: Ensure dtoverlay=disable-bt is present
+          ansible.builtin.lineinfile:
+            path: /boot/firmware/config.txt
+            regexp: "^dtoverlay=disable-bt"
+            line: "dtoverlay=disable-bt"
+            insertafter: EOF

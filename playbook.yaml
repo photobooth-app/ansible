@@ -64,6 +64,7 @@
         mode: "0644"
         content: |
           camera_picamera2_flip_vertical=true
+          camera_picamera2_flip_horizontal=true
 
     - name: Setup systemd service for wigglecam-node
       block:

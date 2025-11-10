@@ -65,6 +65,7 @@
         content: |
           camera_picamera2_flip_vertical=true
           camera_picamera2_flip_horizontal=true
+          camera_picamera2_software_sync={{ software_sync_role }}
 
     - name: Setup systemd service for wigglecam-node
       block:

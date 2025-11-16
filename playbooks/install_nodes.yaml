@@ -1,0 +1,6 @@
+---
+- name: Install wigglecam nodes into system Python
+  hosts: wigglenodes
+  become: false
+  roles:
+    - node

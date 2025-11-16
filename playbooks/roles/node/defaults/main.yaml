@@ -1,0 +1,6 @@
+# Path to the dedicated venv for wigglecam
+node_wigglecam_venv: "{{ ansible_env.HOME }}/wigglecam-venv"
+# Data directory used by the app to store images, logs, and config
+node_data_dir: "{{ ansible_env.HOME }}/wigglecam-data"
+# Service unit path for user services
+node_systemd_user_unit_dir: "{{ ansible_env.HOME }}/.local/share/systemd/user"

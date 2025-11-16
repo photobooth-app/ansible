@@ -1,0 +1,8 @@
+- name: Include system tasks
+  ansible.builtin.import_tasks: system.yaml
+
+- name: Include installation tasks
+  ansible.builtin.import_tasks: install.yaml
+
+- name: Include systemd service tasks
+  ansible.builtin.import_tasks: service.yaml

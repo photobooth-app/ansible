@@ -1,0 +1,50 @@
+- name: Ensure systemd user unit directory exists
+  ansible.builtin.file:
+    path: "{{ node_systemd_user_unit_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Deploy user systemd service for wigglecam-node # info: need linger to keep user logged in.
+  ansible.builtin.copy:
+    dest: "{{ node_systemd_user_unit_dir }}/wigglecam-node.service"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=wigglecam-node
+      After=default.target
+
+      [Service]
+      Type=simple
+      Restart=always
+      WorkingDirectory={{ node_data_dir }}
+      ExecStart={{ node_wigglecam_venv }}/bin/wigglecam-node --camera {{ camera }} --device-id {{ device_id }}
+
+      [Install]
+      WantedBy=default.target
+
+- name: Enable linger for {{ ansible_user }} # needed to allow user based services to keep running even if not logged in
+  become: true
+  ansible.builtin.command: "loginctl enable-linger {{ ansible_user }}"
+  args:
+    creates: "/var/lib/systemd/linger/{{ ansible_user }}"
+
+- name: Reload user systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+
+- name: Enable wigglecam-node user service
+  ansible.builtin.systemd:
+    name: wigglecam-node.service
+    enabled: true
+    scope: user
+
+- name: Restart Wigglecam Node
+  ansible.builtin.systemd:
+    name: wigglecam-node.service
+    state: restarted
+    scope: user

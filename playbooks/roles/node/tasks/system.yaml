@@ -1,0 +1,26 @@
+- name: Ensure apt index is up to date
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Upgrade system packages
+  become: true
+  ansible.builtin.apt:
+    upgrade: dist
+
+
+- name: Ensure dtoverlay=disable-wifi is present
+  become: true
+  ansible.builtin.lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: "^dtoverlay=disable-wifi"
+    line: "dtoverlay=disable-wifi"
+    insertafter: EOF
+
+- name: Ensure dtoverlay=disable-bt is present
+  become: true
+  ansible.builtin.lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: "^dtoverlay=disable-bt"
+    line: "dtoverlay=disable-bt"
+    insertafter: EOF

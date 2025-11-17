@@ -1,0 +1,2 @@
+#!/bin/sh
+until curl -s http://localhost:8000 >/dev/null; do sleep 1; done; {% if ansible_distribution_release in ['buster','bullseye','bookworm'] %}chromium-browser{% else %}chromium{% endif %} --kiosk --password-store=basic --disable-pinch --disable-features=Translate --noerrdialogs --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --start-maximized http://localhost:8000/

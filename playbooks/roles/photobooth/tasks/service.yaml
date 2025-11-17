@@ -1,0 +1,50 @@
+- name: Ensure systemd user unit directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.local/share/systemd/user"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Deploy user systemd service # info: need linger to keep user logged in.
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/systemd/user/photobooth-app.service"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=photobooth-app
+      After=default.target
+
+      [Service]
+      Type=simple
+      Restart=always
+      WorkingDirectory={{ photobooth_data_dir }}
+      ExecStart={{ photobooth_venv }}/bin/photobooth
+
+      [Install]
+      WantedBy=default.target
+
+- name: Enable linger for {{ ansible_user }} # needed to allow user based services to keep running even if not logged in
+  become: true
+  ansible.builtin.command: "loginctl enable-linger {{ ansible_user }}"
+  args:
+    creates: "/var/lib/systemd/linger/{{ ansible_user }}"
+
+- name: Reload user systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+
+- name: Enable photobooth-app user service
+  ansible.builtin.systemd:
+    name: photobooth-app.service
+    enabled: true
+    scope: user
+
+- name: Restart photobooth-app
+  ansible.builtin.systemd:
+    name: photobooth-app.service
+    state: restarted
+    scope: user

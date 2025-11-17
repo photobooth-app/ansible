@@ -1,0 +1,6 @@
+[Desktop Entry]
+Terminal=false
+Type=Application
+Name=Photobooth-App
+Exec={% if ansible_distribution_release in ['buster','bullseye','bookworm'] %}chromium-browser{% else %}chromium{% endif %} --kiosk --disable-features=Translate --noerrdialogs --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --start-maximized http://localhost:8000/
+StartupNotify=false

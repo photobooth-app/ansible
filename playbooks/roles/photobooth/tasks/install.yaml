@@ -18,15 +18,28 @@
     state: present
     update_cache: false
 
+
 - name: Install photobooth-app into a dedicated venv
   ansible.builtin.pip:
-    name: "photobooth-app"
-    state: "latest"
+    name: "photobooth-app=={{ photobooth_version }}"
+    state: present
     extra_args: --prefer-binary
     virtualenv: "{{ photobooth_venv }}"
     virtualenv_command: "python3 -m venv"
     virtualenv_site_packages: true # system packages visible for picamera2/libcamera
   become: false
+  when: photobooth_version != 'github'
+
+- name: Install photobooth-app from GitHub (main branch from github repo)
+  ansible.builtin.pip:
+    name: "git+https://github.com/photobooth-app/photobooth-app.git@main"
+    state: present
+    extra_args: --prefer-binary
+    virtualenv: "{{ photobooth_venv }}"
+    virtualenv_command: "python3 -m venv"
+    virtualenv_site_packages: true # system packages visible for picamera2/libcamera
+  become: false
+  when: photobooth_version == 'github'
 
 - name: Create data directory
   ansible.builtin.file:
@@ -46,21 +59,41 @@
       # camera_picamera2_flip_vertical=true
       # camera_picamera2_flip_horizontal=true
 
-- name: Deploy Photobooth desktop entry system-wide
-  ansible.builtin.template:
-    src: photobooth-app.desktop.j2
-    dest: /usr/share/applications/photobooth-app.desktop
-    mode: '0644'
-  become: true
+- name: Desktop entry
+  block:
+    - name: Deploy Photobooth desktop entry system-wide
+      become: true
+      ansible.builtin.template:
+        src: photobooth-app.desktop.j2
+        dest: /usr/share/applications/photobooth-app.desktop
+        mode: '0644'
 
-- name: Ensure labwc autostart directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.config/labwc"
-    state: directory
-    mode: '0755'
+    - name: Ensure Desktop directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/Desktop"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
-- name: Configure labwc autostart for Photobooth
-  ansible.builtin.template:
-    src: autostart.j2
-    dest: "{{ ansible_env.HOME }}/.config/labwc/autostart"
-    mode: '0755'
+    - name: Place Photobooth desktop link
+      check_mode: false
+      ansible.builtin.file:
+        src: /usr/share/applications/photobooth-app.desktop
+        dest: "{{ ansible_env.HOME }}/Desktop/photobooth-app.desktop"
+        state: link
+        force: true
+
+- name: Autostart
+  block:
+    - name: Ensure labwc autostart directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/labwc"
+        state: directory
+        mode: '0755'
+
+    - name: Configure labwc autostart for Photobooth
+      ansible.builtin.template:
+        src: autostart.j2
+        dest: "{{ ansible_env.HOME }}/.config/labwc/autostart"
+        mode: '0755'

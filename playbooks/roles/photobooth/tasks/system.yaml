@@ -1,39 +1,40 @@
-- name: Ensure apt index is up to date
-  become: true
-  ansible.builtin.apt:
-    update_cache: true
-
 - name: Upgrade system packages
   become: true
   ansible.builtin.apt:
-    upgrade: dist
+    update_cache: true
+    autoclean: true
+    autoremove: true
+    upgrade: full
 
-- name: Create systemd service to disable WiFi power save
-  become: true
-  ansible.builtin.copy:
-    dest: /etc/systemd/system/wifi-powersave-off.service
-    mode: '0644'
-    content: |
-      [Unit]
-      Description=Disable WiFi power save mode
-      After=network.target
+- name: Disable WiFi power save to solve conneciton issues
+  block:
+    - name: Create systemd service to disable WiFi power save
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/wifi-powersave-off.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Disable WiFi power save mode
+          After=network.target
 
-      [Service]
-      Type=oneshot
-      ExecStart=iw dev wlan0 set power_save off
-      RemainAfterExit=yes
+          [Service]
+          Type=oneshot
+          ExecStart=iw dev wlan0 set power_save off
+          RemainAfterExit=yes
 
-      [Install]
-      WantedBy=multi-user.target
+          [Install]
+          WantedBy=multi-user.target
 
-- name: Reload user systemd daemon
-  become: true
-  ansible.builtin.systemd:
-    daemon_reload: true
+    - name: Reload systemd daemon
+      become: true
+      ansible.builtin.systemd:
+        daemon_reload: true
 
-- name: Enable and start wifi-powersave-off service
-  become: true
-  ansible.builtin.systemd:
-    name: wifi-powersave-off.service
-    enabled: true
-    state: started
+    - name: Enable and start wifi-powersave-off service
+      become: true
+      check_mode: false
+      ansible.builtin.systemd:
+        name: wifi-powersave-off.service
+        enabled: true
+        state: started

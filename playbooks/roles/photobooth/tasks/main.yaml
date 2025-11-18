@@ -6,8 +6,3 @@
 
 - name: Include systemd service tasks
   ansible.builtin.import_tasks: service.yaml
-
-- name: Uninstall photobooth-app pipx package if installed
-  community.general.pipx:
-    name: photobooth-app
-    state: absent

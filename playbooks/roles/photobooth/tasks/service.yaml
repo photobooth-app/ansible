@@ -37,14 +37,10 @@
     daemon_reload: true
     scope: user
 
-- name: Enable photobooth-app user service
+- name: Restart photobooth-app
+  check_mode: false
   ansible.builtin.systemd:
     name: photobooth-app.service
     enabled: true
-    scope: user
-
-- name: Restart photobooth-app
-  ansible.builtin.systemd:
-    name: photobooth-app.service
     state: restarted
     scope: user

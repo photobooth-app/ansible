@@ -33,7 +33,7 @@
 - name: Install photobooth-app from GitHub (main branch from github repo)
   ansible.builtin.pip:
     name: "git+https://github.com/photobooth-app/photobooth-app.git@main"
-    state: present
+    state: latest
     extra_args: --prefer-binary
     virtualenv: "{{ photobooth_venv }}"
     virtualenv_command: "python3 -m venv"

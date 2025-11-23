@@ -3,4 +3,4 @@ photobooth_venv: "{{ ansible_env.HOME }}/photobooth-venv"
 # Data directory used by the app to store images, logs, and config
 photobooth_data_dir: "{{ ansible_env.HOME }}/photobooth-data"
 # the version to install
-photobooth_version: "8.5.0"
+photobooth_version: "8.5.1"

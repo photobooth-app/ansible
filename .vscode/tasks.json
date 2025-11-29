@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "playbook/install_photobooth",
+      "type": "shell",
+      "command": "ansible-playbook playbooks/install_photobooth.yaml -i inventories/hosts.ini"
+    },
+    {
+      "label": "playbook/install_nodes",
+      "type": "shell",
+      "command": "ansible-playbook playbooks/install_nodes.yaml -i inventories/hosts.ini"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-- name: Install wigglecam nodes into system Python
+- name: Install photobooth
   hosts: photobooth
   become: false
   roles:

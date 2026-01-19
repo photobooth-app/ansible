@@ -18,7 +18,6 @@
     state: present
     update_cache: false
 
-
 - name: Install photobooth-app into a dedicated venv
   ansible.builtin.pip:
     name: "photobooth-app=={{ photobooth_version }}"
@@ -66,13 +65,13 @@
       ansible.builtin.template:
         src: photobooth-app.desktop.j2
         dest: /usr/share/applications/photobooth-app.desktop
-        mode: '0644'
+        mode: "0644"
 
     - name: Ensure Desktop directory exists
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/Desktop"
         state: directory
-        mode: '0755'
+        mode: "0755"
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_gid }}"
 
@@ -90,10 +89,10 @@
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/.config/labwc"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Configure labwc autostart for Photobooth
       ansible.builtin.template:
         src: autostart.j2
         dest: "{{ ansible_env.HOME }}/.config/labwc/autostart"
-        mode: '0755'
+        mode: "0755"

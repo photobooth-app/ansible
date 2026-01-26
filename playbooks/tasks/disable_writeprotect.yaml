@@ -1,0 +1,9 @@
+- name: Disable OverlayFs # https://www.raspberrypi.com/documentation/computers/configuration.html#overlay-file-system-2
+  become: true
+  ansible.builtin.command: "raspi-config nonint do_overlayfs 1" # 0 turns off, allows persistent writing.
+  changed_when: true
+
+- name: Reboot to deactivate overlayfs
+  ansible.builtin.reboot:
+    reboot_timeout: 120
+  become: true

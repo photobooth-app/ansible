@@ -24,3 +24,37 @@
     regexp: "^dtoverlay=disable-bt"
     line: "dtoverlay=disable-bt"
     insertafter: EOF
+
+- name: Disable all automatic services (useless if write protected)
+  become: true
+  block:
+    - name: Disable apt-daily services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: false
+        state: stopped
+        masked: true
+      loop:
+        - apt-daily.service
+        - apt-daily.timer
+        - apt-daily-upgrade.service
+        - apt-daily-upgrade.timer
+
+    - name: Disable unattended-upgrades
+      ansible.builtin.systemd:
+        name: unattended-upgrades.service
+        enabled: false
+        state: stopped
+        masked: true
+
+    - name: Remove unattended-upgrades package (optional but recommended)
+      ansible.builtin.apt:
+        name: unattended-upgrades
+        state: absent
+
+    - name: Ensure journald is volatile (no persistent logs)
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/journald.conf
+        regexp: '^Storage='
+        line: 'Storage=volatile'
+        create: false

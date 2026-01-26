@@ -1,3 +1,6 @@
+- name: Disable OverlayFS
+  ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/disable_writeprotect.yaml"
+
 - name: Include system tasks
   ansible.builtin.import_tasks: system.yaml
 
@@ -6,3 +9,6 @@
 
 - name: Include systemd service tasks
   ansible.builtin.import_tasks: service.yaml
+
+- name: Enable OverlayFS
+  ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/enable_writeprotect.yaml"

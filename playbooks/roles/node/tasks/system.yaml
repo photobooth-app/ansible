@@ -40,13 +40,6 @@
         - apt-daily-upgrade.service
         - apt-daily-upgrade.timer
 
-    - name: Disable unattended-upgrades
-      ansible.builtin.systemd:
-        name: unattended-upgrades.service
-        enabled: false
-        state: stopped
-        masked: true
-
     - name: Remove unattended-upgrades package (optional but recommended)
       ansible.builtin.apt:
         name: unattended-upgrades

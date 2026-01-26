@@ -10,6 +10,11 @@
       "label": "playbook/install_nodes",
       "type": "shell",
       "command": "ansible-playbook playbooks/install_nodes.yaml -i inventories/hosts.ini"
+    },
+    {
+      "label": "ping hosts",
+      "type": "shell",
+      "command": "ansible all -m ping -i inventories/hosts.ini"
     }
   ]
 }

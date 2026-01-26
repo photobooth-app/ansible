@@ -2,5 +2,12 @@
 - name: Install photobooth
   hosts: photobooth
   become: false
+
+  vars_prompt:
+    - name: photobooth_version
+      prompt: "Which version should be installed? Choose from pypi or 'github' for github main branch install."
+      private: false
+      default: "9.0.0"
+
   roles:
     - photobooth

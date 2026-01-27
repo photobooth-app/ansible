@@ -4,6 +4,9 @@
 - name: Include system tasks
   ansible.builtin.import_tasks: system.yaml
 
+- name: Include persistent data folder tasks
+  ansible.builtin.import_tasks: datafolder.yaml
+
 - name: Include installation tasks
   ansible.builtin.import_tasks: install.yaml
 

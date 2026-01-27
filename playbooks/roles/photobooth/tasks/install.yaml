@@ -42,7 +42,7 @@
 
 - name: Create data directory
   ansible.builtin.file:
-    path: "{{ photobooth_data_dir }}"
+    path: "{{ photobooth_persistent_data_mnt }}/photobooth-data"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -50,7 +50,7 @@
 
 - name: Create .env.node file in data directory
   ansible.builtin.copy:
-    dest: "{{ photobooth_data_dir }}/.env.node"
+    dest: "{{ photobooth_persistent_data_mnt }}/photobooth-data/.env.node"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0644"

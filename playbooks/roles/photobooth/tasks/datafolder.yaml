@@ -1,0 +1,46 @@
+- name: Configure persistent data partition
+  become: true
+
+  block:
+    - name: Ensure mountpoint exists in merged root
+      ansible.builtin.file:
+        path: "{{ photobooth_persistent_data_mnt }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Deploy systemd mount unit for /mnt/data
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/mnt-data.mount
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Persistent data partition
+          After=systemd-remount-fs.service
+          Before=multi-user.target
+
+          [Mount]
+          What=/dev/mmcblk0p3
+          Where={{ photobooth_persistent_data_mnt }}
+          Type=ext4
+          Options=defaults,noatime,nodiratime,commit=5,barrier=1
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable mnt-data.mount
+      ansible.builtin.systemd:
+        name: mnt-data.mount
+        enabled: true
+
+    - name: Start mnt-data.mount
+      ansible.builtin.systemd:
+        name: mnt-data.mount
+        state: started

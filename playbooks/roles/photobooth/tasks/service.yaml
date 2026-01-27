@@ -20,7 +20,7 @@
       [Service]
       Type=simple
       Restart=always
-      WorkingDirectory={{ photobooth_data_dir }}
+      WorkingDirectory={{ photobooth_persistent_data_mnt }}/photobooth-data
       ExecStart={{ photobooth_venv }}/bin/photobooth
 
       [Install]

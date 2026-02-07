@@ -1,11 +1,9 @@
-- name: Disable overlayfs twice with reboots # https://www.raspberrypi.com/documentation/computers/configuration.html#overlay-file-system-2
+- name: Disable overlayfs
   become: true
-  block:
-    - name: Disable overlayfs (pass {{ item }})
-      ansible.builtin.command: "raspi-config nonint do_overlayfs 1"
-      changed_when: true
+  ansible.builtin.command: "raspi-config nonint do_overlayfs 1"
+  changed_when: true
 
-    - name: Reboot after disabling overlayfs (pass {{ item }})
-      ansible.builtin.reboot:
-        reboot_timeout: 120
-  loop: [1, 2]
+- name: Reboot after disabling overlayfs
+  ansible.builtin.reboot:
+    reboot_timeout: 120
+  become: true

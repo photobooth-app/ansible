@@ -1,0 +1,43 @@
+# 
+# Enumerate USB ports/devices:
+# lsusb -t
+# usbguard list-devices
+#
+# Watch the events when coming in on the terminal:
+# usbguard watch
+#
+
+
+- name: Configure USBGuard to restrict one USB port to Mass Storage only
+  become: true
+
+  block:
+    - name: Install usbguard
+      apt:
+        name: usbguard
+        state: present
+
+    - name: Ensure usbguard service is enabled and stopped (we deploy config first)
+      systemd:
+        name: usbguard
+        enabled: yes
+        state: stopped
+
+    - name: Deploy USBGuard rules (restrict port 3-2)
+      copy:
+        dest: /etc/usbguard/rules.conf
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          # Allow Mass Storage (08) ONLY on port 3-2
+          allow with-interface equals { 08:*:* } via-port 3-2
+          # Block everything else on this port
+          block via-port 3-2
+          # Allow everything on all other ports
+          allow
+
+    - name: Start usbguard
+      systemd:
+        name: usbguard
+        state: started

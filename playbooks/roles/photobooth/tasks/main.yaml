@@ -1,5 +1,6 @@
-- name: Disable OverlayFS
-  ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/disable_writeprotect.yaml"
+- name: Disable overlayfs twice with reboots # https://www.raspberrypi.com/documentation/computers/configuration.html#overlay-file-system-2
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/disable_writeprotect.yaml"
+  loop: [1, 2]
 
 - name: Include system tasks
   ansible.builtin.import_tasks: system.yaml

@@ -8,7 +8,7 @@
 #
 
 
-- name: Configure USBGuard to restrict one USB port to Mass Storage only
+- name: Configure USBGuard to restrict USB port 3-2 to Mass Storage only. 3-2 is PCB facing port in the corner on Pi5
   become: true
 
   block:
@@ -31,12 +31,11 @@
         mode: '0600'
         content: |
           # Allow Mass Storage (08) ONLY on port 3-2
-          allow with-interface equals { 08:*:* } via-port 3-2
+          allow with-interface equals { 08:*:* } via-port "3-2"
           # Block everything else on this port
-          block via-port 3-2
+          block via-port "3-2"
           # Allow everything on all other ports
           allow
-
     - name: Start usbguard
       systemd:
         name: usbguard

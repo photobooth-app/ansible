@@ -39,6 +39,18 @@
         enabled: true
         state: started
 
+# we disable wifi on photoboothes, if flagged, because they might have a dedicated router and additional wifi leads to
+# unpredicted behaviour which route is taken
+- name: Ensure dtoverlay=disable-wifi is present when requested
+  become: true
+  ansible.builtin.lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: "^dtoverlay=disable-wifi"
+    line: "dtoverlay=disable-wifi"
+    insertafter: EOF
+  when: disable_wifi | default(false)
+
+
 - name: Disable all automatic services (useless if write protected)
   become: true
   block:

@@ -6,7 +6,37 @@
     autoremove: true
     upgrade: full
 
-- name: Disable WiFi power save to solve conneciton issues
+- name: Disable Wifi and remove wifi-powersave-off service if WiFi is disabled
+  when: disable_wifi | default(false)
+  block:
+    # we disable wifi on photoboothes, if flagged, because they might have a dedicated router and additional wifi leads to
+    # unpredicted behaviour which route is taken
+    - name: Ensure dtoverlay=disable-wifi is present when requested
+      become: true
+      ansible.builtin.lineinfile:
+        path: /boot/firmware/config.txt
+        regexp: "^dtoverlay=disable-wifi"
+        line: "dtoverlay=disable-wifi"
+        insertafter: EOF
+
+    - name: Disable wifi-powersave-off service
+      become: true
+      ansible.builtin.systemd:
+        name: wifi-powersave-off.service
+        enabled: false
+        state: stopped
+    - name: Remove wifi-powersave-off service file
+      become: true
+      ansible.builtin.file:
+        path: /etc/systemd/system/wifi-powersave-off.service
+        state: absent
+    - name: Reload systemd daemon after removal
+      become: true
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+- name: Ensure wifi-powersave-off service exists and is active when WiFi is enabled
+  when: not (disable_wifi | default(false))
   block:
     - name: Create systemd service to disable WiFi power save
       become: true
@@ -38,17 +68,6 @@
         name: wifi-powersave-off.service
         enabled: true
         state: started
-
-# we disable wifi on photoboothes, if flagged, because they might have a dedicated router and additional wifi leads to
-# unpredicted behaviour which route is taken
-- name: Ensure dtoverlay=disable-wifi is present when requested
-  become: true
-  ansible.builtin.lineinfile:
-    path: /boot/firmware/config.txt
-    regexp: "^dtoverlay=disable-wifi"
-    line: "dtoverlay=disable-wifi"
-    insertafter: EOF
-  when: disable_wifi | default(false)
 
 
 - name: Disable all automatic services (useless if write protected)

@@ -19,22 +19,6 @@
         line: "dtoverlay=disable-wifi"
         insertafter: EOF
 
-    - name: Disable wifi-powersave-off service
-      become: true
-      ansible.builtin.systemd:
-        name: wifi-powersave-off.service
-        enabled: false
-        state: stopped
-    - name: Remove wifi-powersave-off service file
-      become: true
-      ansible.builtin.file:
-        path: /etc/systemd/system/wifi-powersave-off.service
-        state: absent
-    - name: Reload systemd daemon after removal
-      become: true
-      ansible.builtin.systemd:
-        daemon_reload: true
-
 - name: Ensure wifi-powersave-off service exists and is active when WiFi is enabled
   when: not (disable_wifi | default(false))
   block:

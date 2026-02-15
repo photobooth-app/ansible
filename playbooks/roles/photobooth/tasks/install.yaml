@@ -48,15 +48,15 @@
     group: "{{ ansible_user }}"
     mode: "0755"
 
-- name: Create .env.node file in data directory
-  ansible.builtin.copy:
-    dest: "{{ photobooth_persistent_data_mnt }}/photobooth-data/.env.node"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-    content: |
-      # camera_picamera2_flip_vertical=true
-      # camera_picamera2_flip_horizontal=true
+# - name: Create .env.prod file in data directory
+#   ansible.builtin.copy:
+#     dest: "{{ photobooth_persistent_data_mnt }}/photobooth-data/.env.prod"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0644"
+#     content: |
+#       # camera_picamera2_flip_vertical=true
+#       # camera_picamera2_flip_horizontal=true
 
 - name: Desktop entry
   block:

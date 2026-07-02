@@ -69,7 +69,7 @@
 
     - name: Ensure Desktop directory exists
       ansible.builtin.file:
-        path: "{{ ansible_env.HOME }}/Desktop"
+        path: "{{ ansible_facts.env.HOME }}/Desktop"
         state: directory
         mode: "0755"
         owner: "{{ ansible_user_id }}"
@@ -79,7 +79,7 @@
       check_mode: false
       ansible.builtin.file:
         src: /usr/share/applications/photobooth-app.desktop
-        dest: "{{ ansible_env.HOME }}/Desktop/photobooth-app.desktop"
+        dest: "{{ ansible_facts.env.HOME }}/Desktop/photobooth-app.desktop"
         state: link
         force: true
 
@@ -87,12 +87,12 @@
   block:
     - name: Ensure labwc autostart directory exists
       ansible.builtin.file:
-        path: "{{ ansible_env.HOME }}/.config/labwc"
+        path: "{{ ansible_facts.env.HOME }}/.config/labwc"
         state: directory
         mode: "0755"
 
     - name: Configure labwc autostart for Photobooth
       ansible.builtin.template:
         src: autostart.j2
-        dest: "{{ ansible_env.HOME }}/.config/labwc/autostart"
+        dest: "{{ ansible_facts.env.HOME }}/.config/labwc/autostart"
         mode: "0755"

@@ -1,6 +1,6 @@
 - name: Ensure systemd user unit directory exists
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.local/share/systemd/user"
+    path: "{{ ansible_facts.env.HOME }}/.local/share/systemd/user"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -8,7 +8,7 @@
 
 - name: Deploy user systemd service # info: need linger to keep user logged in.
   ansible.builtin.copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/systemd/user/photobooth-app.service"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/systemd/user/photobooth-app.service"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0644"

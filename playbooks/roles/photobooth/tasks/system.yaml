@@ -80,3 +80,24 @@
         regexp: '^Storage='
         line: 'Storage=volatile'
         create: false
+
+- name: Prevent gvfs-gphoto2 from hijacking the photobooth camera
+  block:
+    - name: Strip executable permissions from gvfs-gphoto2-volume-monitor
+      become: true
+      ansible.builtin.file:
+        path: /usr/lib/gvfs/gvfs-gphoto2-volume-monitor
+        mode: '0644'
+      failed_when: false # Prevents playbook failure if gvfs isn't installed on the target image
+
+    - name: Disable gphoto2-volume-monitor
+      become: false
+      check_mode: false
+      ansible.builtin.systemd:
+        name: gvfs-gphoto2-volume-monitor.service
+        enabled: false
+        state: stopped
+        masked: true
+        force: true
+        scope: user
+        

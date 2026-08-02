@@ -72,8 +72,8 @@
         path: "{{ ansible_facts.env.HOME }}/Desktop"
         state: directory
         mode: "0755"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_gid }}"
+        owner: "{{ ansible_facts.user_id }}"
+        group: "{{ ansible_facts.user_gid }}"
 
     - name: Place Photobooth desktop link
       check_mode: false

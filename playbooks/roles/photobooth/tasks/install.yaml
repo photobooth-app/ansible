@@ -85,6 +85,31 @@
 
 - name: Autostart
   block:
+    - name: Ensure Chromium managed policy directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - /etc/chromium/policies/managed
+        - /etc/chromium-browser/policies/managed
+
+    - name: Disable Chromium translation
+      become: true
+      ansible.builtin.copy:
+        dest: "{{ item }}/photobooth-translate.json"
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          {"TranslateEnabled": false}
+      loop:
+        - /etc/chromium/policies/managed
+        - /etc/chromium-browser/policies/managed
+
     - name: Ensure labwc autostart directory exists
       ansible.builtin.file:
         path: "{{ ansible_facts.env.HOME }}/.config/labwc"

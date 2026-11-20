@@ -1,4 +1,4 @@
-# 
+#
 # Enumerate USB ports/devices:
 # lsusb -t
 # usbguard list-devices
@@ -13,18 +13,18 @@
 
   block:
     - name: Install usbguard
-      apt:
+      ansible.builtin.apt:
         name: usbguard
         state: present
 
     - name: Ensure usbguard service is enabled and stopped (we deploy config first)
-      systemd:
+      ansible.builtin.systemd:
         name: usbguard
-        enabled: yes
+        enabled: true
         state: stopped
 
     - name: Deploy USBGuard rules (restrict port 3-2)
-      copy:
+      ansible.builtin.copy:
         dest: /etc/usbguard/rules.conf
         owner: root
         group: root
@@ -37,6 +37,6 @@
           # Allow everything on all other ports
           allow
     - name: Start usbguard
-      systemd:
+      ansible.builtin.systemd:
         name: usbguard
         state: started

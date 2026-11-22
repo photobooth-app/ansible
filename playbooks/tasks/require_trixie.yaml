@@ -1,0 +1,10 @@
+---
+- name: Require Raspberry Pi OS Trixie
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.os_family | default('') == 'Debian'
+      - ansible_facts.distribution_release | default('') == 'trixie'
+    fail_msg: >-
+      Raspberry Pi OS Trixie is required. Detected
+      {{ ansible_facts.distribution | default('unknown') }}
+      {{ ansible_facts.distribution_release | default('unknown') }}.

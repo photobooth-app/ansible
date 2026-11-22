@@ -9,6 +9,9 @@ xxx
 ## How to use?
 
 Use ansible to automate the installations of the photobooth-app and the wigglecam-nodes.
+The playbooks target 64-bit Raspberry Pi OS Trixie and reject other releases before making changes.
+The photobooth setup requires the labwc desktop; camera nodes can use Trixie Lite.
+
 You need to use ansible first, check their instructions and test it is available on your host computer.
 `ansible --version`
 

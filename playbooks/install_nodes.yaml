@@ -2,5 +2,11 @@
 - name: Install wigglecam nodes into system Python
   hosts: wigglenode
   become: false
+
+  pre_tasks:
+    - name: Check supported platform
+      ansible.builtin.import_tasks: tasks/require_trixie.yaml
+      tags: always
+
   roles:
     - node

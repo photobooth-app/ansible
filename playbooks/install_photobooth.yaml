@@ -9,5 +9,10 @@
       private: false
       default: "9.0.0"
 
+  pre_tasks:
+    - name: Check supported platform
+      ansible.builtin.import_tasks: tasks/require_trixie.yaml
+      tags: always
+
   roles:
     - photobooth
